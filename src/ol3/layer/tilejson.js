@@ -64,8 +64,12 @@ ol3.tilestore.TileJSON = function(uri, opt_callback, opt_obj) {
 
   var projection = ol3.Projection.getFromCode('EPSG:3857');
 
-  goog.base(
-      this, projection, null, ol3.TileUrlFunction.nullTileUrlFunction, null);
+  goog.base(this, {
+    extent: null,
+    projection: projection,
+    tileGrid: null,
+    tileUrlFunction: ol3.TileUrlFunction.nullTileUrlFunction
+  });
 
   /**
    * @private

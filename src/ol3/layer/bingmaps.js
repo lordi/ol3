@@ -90,8 +90,12 @@ ol3.tilestore.BingMaps =
   var projection = ol3.Projection.getFromCode('EPSG:3857');
   var extent = projection.getExtent();
 
-  goog.base(
-      this, projection, null, ol3.TileUrlFunction.nullTileUrlFunction, extent);
+  goog.base(this, {
+    projection: projection,
+    extent: extent,
+    tileGrid: null,
+    tileUrlFunction: ol3.TileUrlFunction.nullTileUrlFunction
+  });
 
 };
 goog.inherits(ol3.tilestore.BingMaps, ol3.TileStore);

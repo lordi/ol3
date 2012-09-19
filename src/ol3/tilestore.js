@@ -8,39 +8,44 @@ goog.require('ol3.TileGrid');
 goog.require('ol3.TileUrlFunctionType');
 
 
+/**
+ * @typedef {{attributions: (Array.<string>|undefined),
+ *            crossOrigin: (?string|undefined),
+ *            extent: (ol3.Extent|undefined),
+ *            projection: ol3.Projection,
+ *            tileGrid: ol3.TileGrid,
+ *            tileUrlFunction: ol3.TileUrlFunctionType}}
+ */
+ol3.TileStoreOptions;
+
+
 
 /**
  * @constructor
  * @extends {ol3.Store}
- * @param {ol3.Projection} projection Projection.
- * @param {ol3.TileGrid} tileGrid Tile grid.
- * @param {ol3.TileUrlFunctionType} tileUrlFunction Tile URL.
- * @param {ol3.Extent=} opt_extent Extent.
- * @param {Array.<string>=} opt_attributions Attributions.
- * @param {?string=} opt_crossOrigin Cross origin.
+ * @param {ol3.TileStoreOptions} options Options.
  */
-ol3.TileStore = function(projection, tileGrid, tileUrlFunction, opt_extent,
-    opt_attributions, opt_crossOrigin) {
+ol3.TileStore = function(options) {
 
-  goog.base(this, projection, opt_extent, opt_attributions);
+  goog.base(this, options.projection, options.extent, options.attributions);
 
   /**
    * @protected
    * @type {ol3.TileGrid}
    */
-  this.tileGrid = tileGrid;
+  this.tileGrid = options.tileGrid;
 
   /**
    * @protected
    * @type {ol3.TileUrlFunctionType}
    */
-  this.tileUrlFunction = tileUrlFunction;
+  this.tileUrlFunction = options.tileUrlFunction;
 
   /**
    * @private
    * @type {?string}
    */
-  this.crossOrigin_ = opt_crossOrigin || 'anonymous';
+  this.crossOrigin_ = options.crossOrigin || 'anonymous';
 
   /**
    * @private

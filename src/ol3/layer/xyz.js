@@ -116,8 +116,14 @@ ol3.tilestore.XYZ =
       tileUrlFunction);
   var extent = projection.getExtent();
 
-  goog.base(this, projection, tileGrid, tileUrlFunction2, extent,
-      opt_attributions, opt_crossOrigin);
+  goog.base(this, {
+    attributions: opt_attributions,
+    crossOrigin: opt_crossOrigin,
+    extent: extent,
+    projection: projection,
+    tileGrid: tileGrid,
+    tileUrlFunction: tileUrlFunction2
+  });
 
 };
 goog.inherits(ol3.tilestore.XYZ, ol3.TileStore);
