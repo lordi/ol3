@@ -34,7 +34,12 @@ ol3.tilegrid.XYZ = function(maxZoom, opt_tileSize) {
   var origin = new ol3.Coordinate(
       -ol3.Projection.EPSG_3857_HALF_SIZE, ol3.Projection.EPSG_3857_HALF_SIZE);
 
-  goog.base(this, resolutions, extent, origin, opt_tileSize);
+  goog.base(this, {
+    extent: extent,
+    origin: origin,
+    resolutions: resolutions,
+    tileSize: opt_tileSize
+  });
 
 };
 goog.inherits(ol3.tilegrid.XYZ, ol3.TileGrid);

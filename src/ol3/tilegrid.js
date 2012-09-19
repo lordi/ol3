@@ -13,22 +13,29 @@ goog.require('ol3.TileCoord');
 goog.require('ol3.array');
 
 
+/**
+ * @typedef {{extent: ol3.Extent,
+ *            origin: (ol3.Coordinate|undefined),
+ *            origins: (Array.<ol3.Coordinate>|undefined),
+ *            resolutions: !Array.<number>,
+ *            tileSize: (ol3.Size|undefined)}}
+ */
+ol3.TileGridOptions;
+
+
 
 /**
  * @constructor
- * @param {!Array.<number>} resolutions Resolutions.
- * @param {ol3.Extent} extent Extent.
- * @param {ol3.Coordinate|!Array.<ol3.Coordinate>} origin Origin.
- * @param {ol3.Size=} opt_tileSize Tile size.
+ * @param {ol3.TileGridOptions} options Options.
  */
-ol3.TileGrid = function(resolutions, extent, origin, opt_tileSize) {
+ol3.TileGrid = function(options) {
 
   /**
    * @private
    * @type {Array.<number>}
    */
-  this.resolutions_ = resolutions;
-  goog.asserts.assert(goog.array.isSorted(resolutions, function(a, b) {
+  this.resolutions_ = options.resolutions;
+  goog.asserts.assert(goog.array.isSorted(this.resolutions_, function(a, b) {
     return b - a;
   }, true));
 
@@ -42,7 +49,7 @@ ol3.TileGrid = function(resolutions, extent, origin, opt_tileSize) {
    * @private
    * @type {ol3.Extent}
    */
-  this.extent_ = extent;
+  this.extent_ = options.extent;
 
   /**
    * @private
@@ -56,11 +63,11 @@ ol3.TileGrid = function(resolutions, extent, origin, opt_tileSize) {
    */
   this.origins_ = null;
 
-  if (origin instanceof ol3.Coordinate) {
-    this.origin_ = origin;
-  } else if (goog.isArray(origin)) {
-    goog.asserts.assert(origin.length == this.numResolutions_);
-    this.origins_ = origin;
+  if (goog.isDef(options.origin)) {
+    this.origin_ = options.origin;
+  } else if (goog.isDef(options.origins)) {
+    goog.asserts.assert(options.origins.length == this.numResolutions_);
+    this.origins_ = options.origins;
   } else {
     goog.asserts.assert(false);
   }
@@ -69,7 +76,7 @@ ol3.TileGrid = function(resolutions, extent, origin, opt_tileSize) {
    * @private
    * @type {ol3.Size}
    */
-  this.tileSize_ = opt_tileSize || new ol3.Size(256, 256);
+  this.tileSize_ = options.tileSize || new ol3.Size(256, 256);
 
 };
 

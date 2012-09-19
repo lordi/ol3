@@ -1,3 +1,4 @@
+goog.require('goog.array');
 goog.require('goog.testing.jsunit');
 goog.require('ol3.Coordinate');
 goog.require('ol3.Extent');
@@ -6,76 +7,75 @@ goog.require('ol3.TileCoord');
 goog.require('ol3.TileGrid');
 
 
-var extent;
-var resolutions;
-var origin;
-var origins;
-var tileSize;
+var options;
 
 
 function setUp() {
-  resolutions = [1000, 500, 250, 100];
-  extent = new ol3.Extent(0, 0, 100000, 100000);
-  origin = new ol3.Coordinate(0, 0);
-  origins = [];
-  tileSize = new ol3.Size(100, 100);
+  options = {
+    resolutions: [1000, 500, 250, 100],
+    extent: new ol3.Extent(0, 0, 100000, 100000),
+    origin: new ol3.Coordinate(0, 0),
+    tileSize: new ol3.Size(100, 100)
+  };
 }
 
 
 function testCreateValid() {
   assertNotThrows(function() {
-    return new ol3.TileGrid(resolutions, extent, origin, tileSize);
+    return new ol3.TileGrid(options);
   });
 }
 
 
 function testCreateDuplicateResolutions() {
-  var resolutions = [100, 50, 50, 25, 10];
+  options.resolutions = [100, 50, 50, 25, 10];
   assertThrows(function() {
-    return new ol3.TileGrid(resolutions, extent, origin, tileSize);
+    return new ol3.TileGrid(options);
   });
 }
 
 
 function testCreateOutOfOrderResolutions() {
-  var resolutions = [100, 25, 50, 10];
+  options.resolutions = [100, 25, 50, 10];
   assertThrows(function() {
-    return new ol3.TileGrid(resolutions, extent, origin, tileSize);
+    return new ol3.TileGrid(options);
   });
 }
 
 
 function testCreateOrigins() {
-  var resolutions = [100, 50, 25, 10];
-  var origins = [origin, origin, origin, origin];
+  options.origins = goog.array.repeat(options.origin, 4);
+  delete options.origin;
   assertNotThrows(function() {
-    return new ol3.TileGrid(resolutions, extent, origins, tileSize);
+    return new ol3.TileGrid(options);
   });
 }
 
 
 function testCreateTooFewOrigins() {
-  var resolutions = [100, 50, 25, 10];
-  var origins = [origin, origin, origin];
+  options.resolutions = [100, 50, 25, 10];
+  options.origins = goog.array.repeat(options.origin, 3);
+  delete options.origin;
   assertThrows(function() {
-    return new ol3.TileGrid(resolutions, extent, origins, tileSize);
+    return new ol3.TileGrid(options);
   });
 }
 
 
 function testCreateTooManyOrigins() {
-  var resolutions = [100, 50, 25, 10];
-  var origins = [origin, origin, origin, origin, origin];
+  options.resolutions = [100, 50, 25, 10];
+  options.origins = goog.array.repeat(options.origin, 5);
+  delete options.origin;
   assertThrows(function() {
-    return new ol3.TileGrid(resolutions, extent, origins, tileSize);
+    return new ol3.TileGrid(options);
   });
 }
 
 
 function testGetTileCoord() {
 
-  origin = new ol3.Coordinate(0, 0);
-  var tileGrid = new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  options.origin = new ol3.Coordinate(0, 0);
+  var tileGrid = new ol3.TileGrid(options);
   var tileCoord;
 
   tileCoord = tileGrid.getTileCoordForCoordAndZ(
@@ -107,8 +107,8 @@ function testGetTileCoord() {
 
 function testGetTileCoordYSouth() {
 
-  origin = new ol3.Coordinate(0, 100000);
-  var tileGrid = new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  options.origin = new ol3.Coordinate(0, 100000);
+  var tileGrid = new ol3.TileGrid(options);
   var tileCoord;
 
   tileCoord = tileGrid.getTileCoordForCoordAndZ(
@@ -139,8 +139,9 @@ function testGetTileCoordYSouth() {
 
 function testGetTileCoordForCoordAndResolution() {
 
-  var tileSize = new ol3.Size(256, 256);
-  var tileGrid = new ol3.TileGrid([10], extent, origin, tileSize);
+  options.resolutions = [10];
+  options.tileSize = new ol3.Size(256, 256);
+  var tileGrid = new ol3.TileGrid(options);
 
   var coordinate;
   var tileCoord;
@@ -220,8 +221,9 @@ function testGetTileCoordForCoordAndResolution() {
 
 function testGetTileCoordForCoordAndResolutionFractional() {
 
-  var tileSize = new ol3.Size(256, 256);
-  var tileGrid = new ol3.TileGrid([1 / 3], extent, origin, tileSize);
+  options.resolutions = [1 / 3];
+  options.tileSize = new ol3.Size(256, 256);
+  var tileGrid = new ol3.TileGrid(options);
 
   var coordinate;
   var tileCoord;
@@ -315,7 +317,7 @@ function testGetTileCoordForCoordAndResolutionFractional() {
 
 function testGetTileCoordCenter() {
 
-  var tileGrid = new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  var tileGrid = new ol3.TileGrid(options);
   var center;
 
   center = tileGrid.getTileCoordCenter(new ol3.TileCoord(0, 0, 0));
@@ -336,7 +338,7 @@ function testGetTileCoordCenter() {
 
 function testGetTileCoordExtent() {
 
-  var tileGrid = new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  var tileGrid = new ol3.TileGrid(options);
   var tileCoordExtent;
 
   tileCoordExtent = tileGrid.getTileCoordExtent(new ol3.TileCoord(0, 0, 0));
@@ -362,7 +364,7 @@ function testGetTileCoordExtent() {
 
 function testGetExtentTileBounds() {
 
-  var tileGrid = new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  var tileGrid = new ol3.TileGrid(options);
   var e = new ol3.Extent(45000, 5000, 55000, 15000);
   var tileBounds;
 
@@ -395,7 +397,7 @@ function testGetExtentTileBounds() {
 
 function testForEachTileCoordParent() {
 
-  var tileGrid = new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  var tileGrid = new ol3.TileGrid(options);
   var zs = [], tileBoundss = [];
 
   tileGrid.forEachTileCoordParentTileBounds(
@@ -432,8 +434,7 @@ function testForEachTileCoordParent() {
 
 function testGetZForResolutionExact() {
 
-  var tileGrid =
-      new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  var tileGrid = new ol3.TileGrid(options);
 
   assertEquals(0, tileGrid.getZForResolution(1000));
   assertEquals(1, tileGrid.getZForResolution(500));
@@ -445,8 +446,7 @@ function testGetZForResolutionExact() {
 
 function testGetZForResolutionApproximate() {
 
-  var tileGrid =
-      new ol3.TileGrid(resolutions, extent, origin, tileSize);
+  var tileGrid = new ol3.TileGrid(options);
 
   assertEquals(0, tileGrid.getZForResolution(2000));
   assertEquals(0, tileGrid.getZForResolution(1000));
