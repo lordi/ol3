@@ -27,13 +27,11 @@ ol3.BingMapsStyle = {
 /**
  * @constructor
  * @extends {ol3.TileLayer}
- * @param {ol3.BingMapsStyle} style Bing Maps style.
- * @param {string} key Key.
- * @param {string=} opt_culture Culture.
+ * @param {ol3.tilestore.BingMapsOptions} options Options.
  * @param {Object.<string, *>=} opt_values Values.
  */
-ol3.layer.BingMaps = function(style, key, opt_culture, opt_values) {
-  var tileStore = new ol3.tilestore.BingMaps(style, key, opt_culture,
+ol3.layer.BingMaps = function(options, opt_values) {
+  var tileStore = new ol3.tilestore.BingMaps(options,
       function(tileStore) {
         this.dispatchEvent(goog.events.EventType.LOAD);
       }, this);
@@ -42,24 +40,29 @@ ol3.layer.BingMaps = function(style, key, opt_culture, opt_values) {
 goog.inherits(ol3.layer.BingMaps, ol3.TileLayer);
 
 
+/**
+ * @typedef {{culture: (string|undefined),
+ *            key: string,
+ *            style: ol3.BingMapsStyle}}
+ */
+ol3.tilestore.BingMapsOptions;
+
+
 
 /**
  * @constructor
  * @extends {ol3.TileStore}
- * @param {ol3.BingMapsStyle} style Bing Maps style.
- * @param {string} key Key.
- * @param {string=} opt_culture Culture.
+ * @param {ol3.tilestore.BingMapsOptions} options Options.
  * @param {?function(ol3.tilestore.BingMaps)=} opt_callback Callback.
  * @param {*=} opt_obj Object.
  */
-ol3.tilestore.BingMaps =
-    function(style, key, opt_culture, opt_callback, opt_obj) {
+ol3.tilestore.BingMaps = function(options, opt_callback, opt_obj) {
 
   /**
    * @private
    * @type {string}
    */
-  this.culture_ = opt_culture || 'en-us';
+  this.culture_ = options.culture || 'en-us';
 
   /**
    * @private
@@ -80,11 +83,11 @@ ol3.tilestore.BingMaps =
   this.object_ = opt_obj;
 
   var uri = new goog.Uri(
-      'http://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + style);
+      'http://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + options.style);
   var jsonp = new goog.net.Jsonp(uri, 'jsonp');
   jsonp.send({
     'include': 'ImageryProviders',
-    'key': key
+    'key': options.key
   }, goog.bind(this.handleImageryMetadataResponse, this));
 
   var projection = ol3.Projection.getFromCode('EPSG:3857');

@@ -6,9 +6,11 @@ goog.require('ol3.layer.BingMaps');
 goog.require('ol3.layer.TileJSON');
 
 
-var layer1 = new ol3.layer.BingMaps(
-    ol3.BingMapsStyle.AERIAL,
-    'AheP841R-MsLErKQChaTba_xDoOCl40-EeTubD9uNhNAyQTePwFY9iVD1_pyqqlE');
+var layer1 = new ol3.layer.BingMaps({
+  culture: undefined,  // FIXME this should not be needed :-(
+  key: 'AheP841R-MsLErKQChaTba_xDoOCl40-EeTubD9uNhNAyQTePwFY9iVD1_pyqqlE',
+  style: ol3.BingMapsStyle.AERIAL
+});
 var layer2 = new ol3.layer.TileJSON(
     'http://api.tiles.mapbox.com/v3/mapbox.va-quake-aug.jsonp');
 
